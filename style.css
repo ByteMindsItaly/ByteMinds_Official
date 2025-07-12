@@ -1,16 +1,6 @@
 @font-face {
-    font-family: 'Apple-Regular';
-    src: url('./SF-Pro-Rounded-Regular.otf') format('truetype');
-}
-
-@font-face {
     font-family: 'Apple-Semibold';
     src: url('./SF-Pro-Rounded-Semibold.otf') format('truetype');
-}
-
-@font-face {
-    font-family: 'Apple-Light';
-    src: url('./SF-Pro-Rounded-Light.otf') format('truetype');
 }
 
 body {
