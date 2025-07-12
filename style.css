@@ -18,7 +18,7 @@
 
 body {
     font-family: 'Apple-SemiBold', sans-serif; /* Changed font to Roboto */
-    background: linear-gradient(135deg, #1a1a1a, #000000); /* Dark grey to black gradient background */
+    background-color: #1a1a1a; /* Dark grey background */
     background-size: 200% 200%; /* Make background larger for animation */
     animation: background-pan 30s ease infinite; /* Apply background animation */
     min-height: 100vh;
