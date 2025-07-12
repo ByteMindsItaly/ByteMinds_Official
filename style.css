@@ -1,13 +1,23 @@
 @font-face {
+    font-family: 'Apple-Regular';
+    src: url('./SF-Pro-Rounded-Regular.otf') format('truetype');
+}
+
+@font-face {
     font-family: 'Apple-Semibold';
     src: url('./SF-Pro-Rounded-Semibold.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Apple-Light';
+    src: url('./SF-Pro-Rounded-Light.otf') format('truetype');
 }
 
 body {
     font-family: 'Apple-SemiBold', sans-serif; /* Changed font to Roboto */
     background-color: #1a1a1a; /* Dark grey background */
     background-size: 200% 200%; /* Make background larger for animation */
-    animation: background-pan 30s ease infinite; /* Apply background animation */
+    animation: background-pan 15s ease infinite; /* Faster background animation */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -23,18 +33,17 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.08); /* Even more subtle white border */
     box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6); /* Softer, more diffused shadow */
     border-radius: 20px; /* Rounded corners */
-    transition: all 0.3s ease-out; /* Smooth transitions for hover effects */
+    /* Removed transition from here to remove generic hover animation */
+    transform: translateZ(0); /* Force GPU acceleration for smoother rendering with backdrop-filter */
 }
-.glass-effect:hover {
-    box-shadow: 0 16px 50px 0 rgba(0, 0, 0, 0.7); /* Slightly larger shadow on hover */
-    transform: translateY(-4px); /* Subtle lift on hover */
-}
+/* Removed .glass-effect:hover rule */
+
 .btn-glass {
     background-color: rgba(255, 255, 255, 0.08); /* More transparent for buttons */
     backdrop-filter: blur(15px); /* Increased blur for buttons */
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle border */
-    transition: all 0.3s ease;
+    transition: all 0.2s ease; /* Faster transition for button */
 }
 .btn-glass:hover {
     background-color: rgba(255, 255, 255, 0.15); /* Slightly less transparent on hover */
@@ -42,7 +51,7 @@ body {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6); /* Enhanced shadow on hover */
 }
 .video-card {
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; /* Smooth transitions for video cards */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* Faster transition for video cards */
 }
 .video-card:hover {
     transform: translateY(-10px) scale(1.03); /* More pronounced lift and slight scale on hover */
