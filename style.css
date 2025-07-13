@@ -23,7 +23,7 @@ body {
     flex-direction: column;
     color: #f0f0f0; /* Off-white text for contrast */
     scroll-behavior: smooth; /* Smooth scrolling for anchor links */
-    padding-top: 3.5rem; /* Space for the fixed navbar, slightly increased for comfort */
+    padding-top: 5rem; /* Increased space for the fixed navbar and desired gap */
     overflow-x: hidden; /* Prevent horizontal scrollbar from mouse effect */
 }
 
@@ -45,13 +45,12 @@ body {
 /* Navbar specific styles (Floating Pill) */
 #main-header {
     position: fixed;
-    left: 0; /* Set left to 0 */
-    right: 0; /* Set right to 0 */
-    margin: 0 auto; /* Center horizontally using auto margins */
-    transform: none; /* Remove transform to avoid conflicts with margin auto */
-    top: 1rem; /* Distance from the top */
+    left: 0; /* Align to left edge */
+    right: 0; /* Align to right edge */
+    margin: 0 auto; /* Center horizontally */
+    top: 1.5rem; /* Distance from the top */
     width: fit-content; /* Make the header fit its content */
-    padding: 0.75rem 1.5rem; /* Vertical and horizontal padding */
+    padding: 0.75rem 2.5rem; /* Increased horizontal padding */
     border-radius: 9999px; /* Extreme border-radius for pill shape */
     z-index: 50; /* Ensure it stays on top */
     background-color: rgba(255, 255, 255, 0.02); /* Transparency set as base for other boxes */
@@ -83,7 +82,7 @@ body {
 
 /* Video Card specific styles */
 .video-card {
-    background-color: rgba(255, 255, 255, 0.03); /* Slightly less transparent than main glass-effect */
+    background-color: rgba(255, 255, 255, 0.04); /* Slightly less transparent (more opaque) than main glass-effect */
     /* TRANSITION REMOVED - GSAP will handle animations */
 }
 
@@ -132,7 +131,12 @@ body {
 }
 
 /* Specific style for the footer to remove bottom border-radius */
-footer.glass-effect {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+#main-footer {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+/* Specific style for the home section to control top margin */
+#home {
+    margin-top: 1.5rem !important; /* Reduced top margin for the first box */
 }
