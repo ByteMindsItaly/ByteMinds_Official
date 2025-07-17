@@ -3,150 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Byteminds</title>
+    <title>ByteMinds - Il tuo canale YouTube</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- GSAP CDN for optimized JavaScript animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <meta name="theme-color" content="#0A0A0A"> <!-- Dark theme color for consistency -->
-    <link rel="shortcut icon" href="./Profilo canali.jpg" type="image/x-icon">
+    <!-- Google Fonts - VT323 for old computer style -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <!-- Tone.js CDN for audio generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%; /* Ensures html and body take full height */
+            overflow-x: hidden; /* Hides horizontal scrollbar */
+            /* For Firefox */
+            scrollbar-width: none;
+            /* For IE and Edge */
+            -ms-overflow-style: none;
+        }
+        body {
+            font-family: 'VT323', monospace; /* Old computer style font */
+            background-color: #000000; /* Black background */
+            color: #ffffff; /* White text */
+            line-height: 1.6;
+        }
+        /* Custom scrollbar - Hidden for WebKit browsers */
+        ::-webkit-scrollbar {
+            width: 0; /* For Chrome, Safari, and Opera */
+            height: 0; /* For horizontal scrollbars */
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; /* Makes the track transparent */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: transparent; /* Makes the thumb transparent */
+        }
+
+        /* Styles for the splash screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000; /* Black background for the terminal */
+            display: flex;
+            align-items: flex-start; /* Aligns content to the top */
+            justify-content: flex-start; /* Aligns content to the left */
+            padding: 2rem; /* Adds padding for alignment */
+            box-sizing: border-box; /* Includes padding in width/height calculation */
+            z-index: 9999; /* Ensures it's in the foreground */
+            transition: opacity 1s ease-out; /* Transition for fading out */
+            overflow: hidden; /* Ensures the splash screen has no scrollbar */
+            cursor: pointer; /* Indicates it's clickable */
+        }
+
+        #boot-text {
+            color: #ffffff; /* White bootloader text */
+            font-size: 0.8rem; /* Smaller font size */
+            line-height: 1.2; /* More compact line height */
+            white-space: pre-wrap; /* Maintains line breaks and spaces */
+            text-align: left;
+            overflow: hidden; /* Hides text that hasn't been "typed" yet */
+            border-right: 0.15em solid #ffffff; /* Blinking cursor */
+            animation: blink-caret .75s step-end infinite; /* Cursor animation */
+        }
+
+        /* Remove cursor after text is typed */
+        #boot-text.typed {
+            border-right: none;
+        }
+
+        #click-to-start {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff; /* Changed to white */
+            font-size: 1rem;
+            animation: pulse 1.5s infinite; /* Pulsing animation */
+            cursor: pointer; /* Indicates it's clickable */
+            display: block; /* Always visible to prompt user interaction */
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Custom styles for squared look and grayscale */
+        .section-card {
+            background-color: #1a1a1a; /* Dark grey for cards/sections */
+            border: 1px solid #333333; /* Medium grey border */
+            /* Animation: Subtle inner shadow for depth */
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease-in-out; /* Smoother transition */
+        }
+        .section-card:hover {
+            border-color: #555555; /* Lighter grey on hover */
+            transform: translateY(-2px); /* Slight lift on hover */
+            /* Animation: More pronounced outer shadow and inner shadow for digital glow effect */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05);
+        }
+        .button-style {
+            background-color: #ffffff; /* White button */
+            color: #000000; /* Black text */
+            border: 1px solid #ffffff; /* White border */
+            transition: all 0.3s ease-in-out; /* Smoother transition */
+        }
+        .button-style:hover {
+            background-color: #000000; /* Black background on hover */
+            color: #ffffff; /* White text on hover */
+            border-color: #ffffff; /* White border on hover */
+            /* Animation: White and slightly green glow for cyber effect */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+        .text-accent {
+            color: #cccccc; /* Light grey for accents */
+        }
+        .text-link:hover {
+            color: #999999; /* Slightly lighter grey on link hover */
+        }
+    </style>
 </head>
-<body class="flex flex-col min-h-screen">
-    <!-- Mouse Light Effect Element -->
-    <div id="mouse-light-effect"></div>
+<body class="antialiased">
+    <!-- Splash screen -->
+    <div id="splash-screen">
+        <pre id="boot-text"></pre>
+        <div id="click-to-start">Clicca per avviare</div>
+    </div>
 
-    <!-- Header & Navigation (Floating Pill) -->
-    <header id="main-header" class="glass-effect">
-        <nav class="flex justify-center items-center w-full space-x-4 md:space-x-8">
-            <div class="flex items-center space-x-2">
-                <!-- Channel Logo SVG Icon -->
-                <img class="h-8 w-8 icon-fill-white" src="./Profilo canali.jpg" alt="Logo Canale">
-                <div class="text-xl font-bold text-white hidden sm:block">ByteMinds</div> <!-- Hidden on small screens for compactness -->
-            </div>
-            <ul class="flex space-x-4">
-                <li><a href="#home" class="nav-link text-white hover:text-gray-400 transition duration-300">Home</a></li>
-                <li><a href="#videos" class="nav-link text-white hover:text-gray-400 transition duration-300">Video</a></li>
-                <li><a href="#about" class="nav-link text-white hover:text-gray-400 transition duration-300">Chi Sono</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main class="flex-grow container mx-auto px-4 py-8 md:py-16">
-
-        <!-- Home Section -->
-        <section id="home" class="glass-effect px-8 py-8 md:px-12 md:py-12 text-center my-8 md:my-12">
-            <!-- Channel Logo in Hero Section - Now an SVG Icon -->
-            <img class="mx-auto mb-6 h-24 w-24 md:h-32 md:w-32 rounded-full icon-fill-white" src="./Profilo canali.jpg" alt="Logo Canale">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight">Benvenuti nel sito di ByteMinds</h1>
-            <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                Esplora contenuti unici sulla Tecnologia
+    <!-- Main site content (initially hidden) -->
+    <div id="main-content" class="hidden min-h-screen flex flex-col items-center w-full relative z-0 px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <header class="text-center mt-10 mb-16 w-full max-w-4xl">
+            <h1 class="text-6xl sm:text-7xl font-extrabold text-white mb-4 leading-tight">
+                Benvenuto su <span class="text-white">ByteMinds</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-300">
+                Riesplora il Mondo della Tecnologia e dell'Informatica
             </p>
-            <a href="https://www.youtube.com/channel/UCxBdOgT7MhCW1c8xntNEYlQ" target="_blank" rel="noopener noreferrer"
-               class="inline-block px-8 py-3 rounded-full text-white font-semibold btn-glass shadow-lg">
-                Visita il Canale YouTube
-            </a>
+        </header>
+
+        <!-- Welcome and Introduction Section -->
+        <section class="section-card p-8 mb-16 w-full max-w-4xl rounded-none">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6 text-left">
+                Chi Siamo
+            </h2>
+            <p class="text-base sm:text-lg text-gray-300 mb-6 text-left">
+                ByteMinds è il tuo punto di riferimento per contenuti approfonditi e facili da capire sul mondo della tecnologia.
+                Dal coding alle ultime novità tech, dai tutorial pratici alle discussioni sulle tendenze future,
+                il nostro obiettivo è demistificare concetti complessi e ispirare la tua curiosità.
+            </p>
+            <p class="text-base sm:text-lg text-gray-300 mb-8 text-left">
+                Unisciti alla nostra community per imparare, crescere e rimanere sempre aggiornato!
+            </p>
+            <div class="text-right">
+                <a href="https://www.youtube.com/channel/UCxBdOgT7MhCW1c8xntNEYlQ" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center button-style font-bold py-3 px-8 rounded-none">
+                    Iscriviti al Canale YouTube
+                    <svg class="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+            </div>
         </section>
 
-        <!-- Recent Videos Section -->
-        <section id="videos" class="my-8 md:my-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white text-center mb-8">Ultimi Video</h2>
-            <div class="glass-effect px-6 py-6 md:px-8 md:py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Latest Videos Section -->
+        <section class="w-full max-w-6xl mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-8 text-center">
+                Ultimi Video
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Video Card 1 -->
-                <div class="video-card glass-effect px-4 py-4">
-                    <!-- Added video-iframe-container class for consistent border-radius -->
-                    <div class="aspect-video bg-gray-800 video-iframe-container mb-4">
-                        <!-- YouTube Embed -->
-                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/4mKO6UanSOA?si=wZu93hOsgBfxdJLq"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen loading="lazy"></iframe>
+                <div class="section-card overflow-hidden rounded-none">
+                    <a href="https://youtu.be/Hkoi9kCf0jw?si=jA7T9e61Lx6YqUZs" target="_blank" rel="noopener noreferrer">
+                        <img src="https://i9.ytimg.com/vi_webp/Hkoi9kCf0jw/maxresdefault.webp?v=669be6ac&sqp=CMi65cMG&rs=AOn4CLAHs7Dgz_G-2q7cqyLtsUanfl_SdA" alt="Miniatura Video 1" class="w-full h-48 object-cover">
+                    </a>
+                    <div class="p-6 text-left">
+                        <h3 class="text-xl font-semibold text-white mb-2">
+                            <a href="https://youtu.be/Hkoi9kCf0jw?si=jA7T9e61Lx6YqUZs" target="_blank" rel="noopener noreferrer" class="text-accent text-link">
+                                Crea Immagini con l'AI Gratuitamente
+                            </a>
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Un tutorial completo per creare immagini con l'ai gratuitamente su qualunque device
+                        </p>
+                        <div class="flex justify-between items-center text-gray-500 text-xs mb-4">
+                            <span>Visualizzazioni: 451</span> <!-- Modify manually here -->
+                            <span>by @ByteMinds_Italy</span>
+                        </div>
+                        <a href="https://youtu.be/Hkoi9kCf0jw?si=jA7T9e61Lx6YqUZs" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center text-gray-400 text-link font-medium">
+                            Guarda il video
+                            <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-2">Trasforma il Tuo Vecchio PC in un Potente Cloud Personale con CasaOS</h3>
-                    <p class="text-gray-300 text-sm mb-3">
-                        Tutorial che illustra come creare un Home Server con CasaOS
-                    </p>
-                    <a href="https://youtu.be/4mKO6UanSOA?si=zSOYCN273Pw8Hrd_" target="_blank" rel="noopener noreferrer"
-                       class="text-gray-400 hover:underline text-sm">Guarda su YouTube &rarr;</a>
                 </div>
 
                 <!-- Video Card 2 -->
-                <div class="video-card glass-effect px-4 py-4">
-                    <!-- Added video-iframe-container class for consistent border-radius -->
-                    <div class="aspect-video bg-gray-800 video-iframe-container mb-4">
-                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Hkoi9kCf0jw?si=nPITypqmHJiEqwL4"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen loading="lazy"></iframe>
+                <div class="section-card overflow-hidden rounded-none">
+                    <a href="https://youtu.be/4mKO6UanSOA?si=WapImoy4ndwSJbdz" target="_blank" rel="noopener noreferrer">
+                        <img src="https://img.youtube.com/vi/4mKO6UanSOA/maxresdefault.jpg" alt="Miniatura Video 2" class="w-full h-48 object-cover">
+                    </a>
+                    <div class="p-6 text-left">
+                        <h3 class="text-xl font-semibold text-white mb-2">
+                            <a href="https://youtu.be/4mKO6UanSOA?si=WapImoy4ndwSJbdz" target="_blank" rel="noopener noreferrer" class="text-accent text-link">
+                                Trasforma il tuo Vecchio Computer in un Home Server
+                            </a>
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Trasforma con pochi Semplici Passaggi il tuo Vecchio Computer in un Comodo ed Intuitivo Home Server accessibile anche quando Fuori Casa
+                        </p>
+                        <div class="flex justify-between items-center text-gray-500 text-xs mb-4">
+                            <span>Visualizzazioni: 2.1K</span> <!-- Modify manually here -->
+                            <span>by @ByteMinds_Italy</span>
+                        </div>
+                        <a href="https://youtu.be/4mKO6UanSOA?si=WapImoy4ndwSJbdz" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center text-gray-400 text-link font-medium">
+                            Guarda il video
+                            <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-2">Creare Immagini Gratis con Fooocus AI</h3>
-                    <p class="text-gray-300 text-sm mb-3">
-                        Crea immagini gratuitamente online senza installazione
-                    </p>
-                    <a href="https://youtu.be/Hkoi9kCf0jw?si=voa-ZckUiq-Un9Z" target="_blank" rel="noopener noreferrer"
-                       class="text-gray-400 hover:underline text-sm">Guarda su YouTube &rarr;</a>
                 </div>
 
                 <!-- Video Card 3 -->
-                <div class="video-card glass-effect px-4 py-4">
-                    <!-- Added video-iframe-container class for consistent border-radius -->
-                    <div class="aspect-video bg-gray-800 video-iframe-container mb-4">
-                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/yourvideoid3"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen loading="lazy"></iframe>
+                <div class="section-card overflow-hidden rounded-none">
+                    <a href="https://www.youtube.com/watch?v=video3" target="_blank" rel="noopener noreferrer">
+                        <img src="https://placehold.co/600x338/1a1a1a/ffffff?text=Miniatura+Video+3" alt="Miniatura Video 3" class="w-full h-48 object-cover">
+                    </a>
+                    <div class="p-6 text-left">
+                        <h3 class="text-xl font-semibold text-white mb-2">
+                            <a href="https://www.youtube.com/watch?v=video3" target="_blank" rel="noopener noreferrer" class="text-accent text-link">
+                                Costruire un Sito Web con HTML e CSS
+                            </a>
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Una guida passo-passo per creare il tuo primo sito web, imparando le basi di HTML e CSS.
+                        </p>
+                        <div class="flex justify-between items-center text-gray-500 text-xs mb-4">
+                            <span>Visualizzazioni: 980</span> <!-- Modify manually here -->
+                            <span>by @ByteMinds_Italy</span>
+                        </div>
+                        <a href="https://www.youtube.com/watch?v=video3" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center text-gray-400 text-link font-medium">
+                            Guarda il video
+                            <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-2">Titolo Video Recente 3</h3>
-                    <p class="text-gray-300 text-sm mb-3">
-                        Il terzo video della serie, che approfondisce un argomento specifico con dettagli.
-                    </p>
-                    <a href="https://www.youtube.com/watch?v=yourvideoid3" target="_blank" rel="noopener noreferrer"
-                       class="text-gray-400 hover:underline text-sm">Guarda su YouTube &rarr;</a>
                 </div>
 
-                <!-- Video Card 4 (New) -->
-                <div class="video-card glass-effect px-4 py-4">
-                    <!-- Added video-iframe-container class for consistent border-radius -->
-                    <div class="aspect-video bg-gray-800 video-iframe-container mb-4">
-                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/yourvideoid4"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen loading="lazy"></iframe>
+                <!-- Video Card 4 (Example for more videos) -->
+                <div class="section-card overflow-hidden rounded-none">
+                    <a href="https://www.youtube.com/watch?v=video4" target="_blank" rel="noopener noreferrer">
+                        <img src="https://placehold.co/600x338/1a1a1a/ffffff?text=Miniatura+Video+4" alt="Miniatura Video 4" class="w-full h-48 object-cover">
+                    </a>
+                    <div class="p-6 text-left">
+                        <h3 class="text-xl font-semibold text-white mb-2">
+                            <a href="https://www.youtube.com/watch?v=video4" target="_blank" rel="noopener noreferrer" class="text-accent text-link">
+                                Recensione: Nuovo MacBook Pro M3
+                            </a>
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Analisi approfondita del nuovo MacBook Pro con chip M3: prestazioni, design e innovazioni.
+                        </p>
+                        <div class="flex justify-between items-center text-gray-500 text-xs mb-4">
+                            <span>Visualizzazioni: 1.8K</span> <!-- Modify manually here -->
+                            <span>by @ByteMinds_Italy</span>
+                        </div>
+                        <a href="https://www.youtube.com/watch?v=video4" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center text-gray-400 text-link font-medium">
+                            Guarda il video
+                            <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-2">Titolo Video Recente 4</h3>
-                    <p class="text-gray-300 text-sm mb-3">
-                        Un nuovo video con contenuti freschi e spunti interessanti per la community.
-                    </p>
-                    <a href="https://www.youtube.com/watch?v=yourvideoid4" target="_blank" rel="noopener noreferrer"
-                       class="text-gray-400 hover:underline text-sm">Guarda su YouTube &rarr;</a>
                 </div>
             </div>
         </section>
 
-        <!-- About Section -->
-        <section id="about" class="my-8 md:my-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white text-center mb-8">Chi Sono</h2>
-            <div class="glass-effect px-8 py-8 md:px-12 md:py-12 flex flex-col md:flex-row items-center md:space-x-8">
-                <div class="w-32 h-32 md:w-48 md:h-48 bg-gray-700 rounded-full overflow-hidden flex-shrink-0 mb-6 md:mb-0 flex items-center justify-center">
-                    <!-- Profile SVG Icon -->
-                    <svg class="h-24 w-24 md:h-36 md:w-36 icon-fill-white" viewBox="0 0 24 24" fill="none" src="image-w856.jpg4">
-                        <path d="M12 2C9.243 2 7.243 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM12 14C7.589 14 4 17.589 4 22H20C20 17.589 16.411 14 12 14Z" fill="currentColor"/>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-lg text-gray-300 mb-4">
-                        Ciao! Sono Emanuele e questo è il sito web del mio canale YouTube ByteMinds sul quale puoi trovare contenuti riguardanti l'informatica.
-                    </p>
-                </div>
-            </div>
-        </section>
+        <!-- Footer Section -->
+        <footer class="text-center text-gray-500 mt-12 w-full max-w-4xl">
+            <p>&copy; 2024 ByteMinds. Tutti i diritti riservati.</p>
+        </footer>
+    </div>
 
-    </main>
+    <!-- Script for the bootloader animation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            const bootTextElement = document.getElementById('boot-text');
+            const mainContent = document.getElementById('main-content');
+            const clickToStartElement = document.getElementById('click-to-start');
 
-    <!-- Footer -->
-    <footer id="main-footer" class="w-full p-6 glass-effect text-center text-gray-300 mt-auto">
-        <p class="mb-2">Contattaci: <a href="mailto:info@byteminds.com" class="text-gray-400 hover:text-white transition duration-300">info@byteminds.com</a></p>
-        <p>&copy; 2025 ByteMinds. Tutti i diritti riservati.</p>
-    </footer>
+            let synth; // Tone.js synthesizer declaration
+            let gainNode; // Gain node for volume control
+
+            // Function to start the audio context and animation
+            const startBootAnimation = () => {
+                // Start the audio context (required for Tone.js)
+                if (Tone.context.state !== 'running') {
+                    Tone.start().then(() => {
+                        console.log("Audio context started successfully on user interaction.");
+                        // Initialize the synthesizer and gain node only once
+                        if (!synth) {
+                            synth = new Tone.Synth({
+                                oscillator: {
+                                    type: "square" // Old computer beeps are often square waves
+                                }
+                            });
+                            gainNode = new Tone.Gain(0.05).toDestination(); // Lower volume (0.05 = 5% of max)
+                            synth.connect(gainNode);
+                        }
+                        // Hide the "Click to start" message
+                        clickToStartElement.style.display = 'none';
+                        // Start typing
+                        typeLine();
+                    }).catch(e => {
+                        console.error("Failed to start audio context on user interaction:", e);
+                        // If it fails even on click, show an error or fallback
+                    });
+                } else {
+                    // Context already running, proceed
+                    if (!synth) {
+                        synth = new Tone.Synth({
+                            oscillator: {
+                                type: "square"
+                            }
+                        });
+                        gainNode = new Tone.Gain(0.05).toDestination();
+                        synth.connect(gainNode);
+                    }
+                    clickToStartElement.style.display = 'none';
+                    typeLine();
+                }
+            };
+
+            // Add event listener to start animation on click
+            splashScreen.addEventListener('click', startBootAnimation, { once: true });
+
+
+            // Simulated boot sequence with more technical messages
+            const bootSequence = [
+                "BIOS: Initializing...",
+                "Memory Test: 65536KB OK",
+                "Disk Drive 0: ST31000528AS, S/N: 9SL00000, FW: CC49",
+                "Disk Drive 1: WDC WD10000L, S/N: WMA00000, FW: 01.01A01",
+                "Checking NVRAM...",
+                "PCI Bus: Initializing devices...",
+                "  [00:00:00.0] Host bridge: Intel Corporation 82G33/G31/P35/P31 Express DRAM Controller (rev 02)",
+                "  [00:01:00.0] VGA compatible controller: NVIDIA Corporation G92 [GeForce 9800 GT] (rev a2)",
+                "  [00:02:00.0] Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 03)",
+                "  [00:03:00.0] Audio device: Intel Corporation 82801I (ICH9 Family) HD Audio Controller (rev 02)",
+                "Booting from Hard Disk...",
+                "GRUB loading...",
+                "Welcome to GRUB!",
+                "Loading Linux kernel...",
+                "Kernel version: 5.15.0-76-generic (x86_64)",
+                "Initializing initramfs...",
+                "Starting systemd-udevd version 249...",
+                "Mounting /dev/sda1 on /boot...",
+                "Starting NetworkManager...",
+                "Starting SSH daemon...",
+                "Starting Apache HTTP Server...",
+                "Starting MySQL database service...",
+                "System startup complete.",
+                "",
+                "  ____        _           _", // ASCII start: lineIndex 24
+                " | __ ) _   _| |_ ___  __| | ___  ___", // lineIndex 25
+                " |  _ \\| | | | __/ _ \\/ _` |/ _ \\/ __|", // lineIndex 26
+                " | |_) | |_| | ||  __/ (_| | (_) \\__ \\", // lineIndex 27
+                " |____/ \\__, |\\__\\___|\\__,_|\\___/|___/", // lineIndex 28
+                "        |___/", // ASCII end: lineIndex 29
+                "",
+                "Benvenuto nel Sito di ByteMinds."
+            ];
+
+            let lineIndex = 0;
+            let charIndex = 0;
+            const typingSpeed = 1; // Typing speed in ms per character (very fast)
+            const lineDelay = 10; // Delay between lines in ms (very fast, further reduced)
+            const fadeOutDelay = 150; // Delay before fade out in ms (very fast, further reduced)
+
+            function typeLine() {
+                if (lineIndex < bootSequence.length) {
+                    // Play beep only if synth is initialized AND current line is NOT part of ASCII art
+                    // ASCII art lines are from index 24 to 29 (inclusive)
+                    const isAsciiArtLine = lineIndex >= 24 && lineIndex <= 29;
+                    if (charIndex === 0 && synth && !isAsciiArtLine) {
+                        // Adjusted pitch and duration for a more "old PC" beep
+                        synth.triggerAttackRelease("G4", "64n"); // G4 note, very short duration
+                    }
+
+                    if (charIndex < bootSequence[lineIndex].length) {
+                        bootTextElement.textContent += bootSequence[lineIndex].charAt(charIndex);
+                        charIndex++;
+                        setTimeout(typeLine, typingSpeed);
+                    } else {
+                        bootTextElement.textContent += '\n'; // Add new line after typing the line
+                        bootTextElement.scrollTop = bootTextElement.scrollHeight; // Scroll down
+                        lineIndex++;
+                        charIndex = 0;
+                        setTimeout(() => {
+                            if (lineIndex < bootSequence.length) {
+                                typeLine(); // Start typing the next line
+                            } else {
+                                // All lines typed, remove cursor and start fade out
+                                bootTextElement.classList.add('typed');
+                                setTimeout(() => {
+                                    splashScreen.style.opacity = '0';
+                                    setTimeout(() => {
+                                        splashScreen.remove(); // Remove splash screen
+                                        mainContent.classList.remove('hidden'); // Show main content
+                                        document.body.style.overflow = 'auto'; // Re-enable body scroll
+                                    }, 1000); // Wait for fade out transition to complete
+                                }, fadeOutDelay); // Delay before fade out
+                            }
+                        }, lineDelay); // Short delay between lines
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
