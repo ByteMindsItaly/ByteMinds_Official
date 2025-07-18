@@ -6,12 +6,12 @@
     <title>ByteMinds - Il tuo canale YouTube</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Favicon -->
+     <link rel="shortcut icon" href="./Byteminds_Logo.png" type="image/x-icon">
     <!-- Google Fonts - VT323 for old computer style -->
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <!-- Tone.js CDN for audio generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="./Byteminds_Logo.png" type="image/x-icon">
     <style>
         html, body {
             margin: 0;
@@ -50,51 +50,62 @@
             height: 100%;
             background-color: #000000; /* Black background for the terminal */
             display: flex;
-            align-items: flex-start; /* Aligns content to the top */
-            justify-content: flex-start; /* Aligns content to the left */
+            flex-direction: column; /* For impilare gli elementi verticalmente */
+            align-items: flex-start; /* Aligns content to the left */
+            justify-content: flex-start; /* Aligns content to the top */
             padding: 2rem; /* Adds padding for alignment */
             box-sizing: border-box; /* Includes padding in width/height calculation */
             z-index: 9999; /* Ensures it's in the foreground */
             transition: opacity 1s ease-out; /* Transition for fading out */
             overflow: hidden; /* Ensures the splash screen has no scrollbar */
-            cursor: pointer; /* Indicates it's clickable */
+            cursor: default; /* Default cursor, specific element will have pointer */
         }
 
-        #boot-text {
-            color: #ffffff; /* White bootloader text */
-            font-size: 0.8rem; /* Smaller font size */
-            line-height: 1.2; /* More compact line height */
-            white-space: pre-wrap; /* Maintains line breaks and spaces */
+        #grub-menu {
+            color: #ffffff;
+            font-size: 1.2rem; /* GRUB menu font size */
+            line-height: 1.4; /* Adjusted line height for better spacing */
             text-align: left;
-            overflow: hidden; /* Hides text that hasn't been "typed" yet */
-            border-right: 0.15em solid #ffffff; /* Blinking cursor */
-            animation: blink-caret .75s step-end infinite; /* Cursor animation */
+            white-space: pre; /* Mantiene gli spazi e gli a capo come sono */
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            width: 100%; /* Occupa la larghezza disponibile */
+            overflow: hidden; /* Nasconde lo scrollbar per il testo */
         }
 
-        /* Remove cursor after text is typed */
-        #boot-text.typed {
-            border-right: none;
+        #boot-sequence-display {
+            color: #ffffff;
+            font-size: 0.8rem; /* Adjusted font size for boot sequence */
+            line-height: 1.2; /* Adjusted line height for boot sequence */
+            text-align: left;
+            white-space: pre; /* Mantiene gli spazi e gli a capo come sono */
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            width: 100%; /* Occupa la larghezza disponibile */
+            overflow: hidden; /* Nasconde lo scrollbar per il testo */
+            border-right: 0.15em solid #ffffff; /* Cursore per la digitazione */
+            animation: blink-caret .75s step-end infinite;
         }
 
-        #click-to-start {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ffffff; /* Changed to white */
-            font-size: 1rem;
-            animation: pulse 1.5s infinite; /* Pulsing animation */
-            cursor: pointer; /* Indicates it's clickable */
-            display: block; /* Always visible to prompt user interaction */
+        #boot-sequence-display.typed {
+            border-right: none; /* Rimuove il cursore quando la digitazione è completa */
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+        .highlighted-grub-line {
+            background-color: #333; /* Sfondo grigio scuro per l'evidenziazione */
+            color: #fff; /* Testo bianco per l'evidenziazione */
+            display: block; /* Rende l'elemento un blocco per occupare tutta la larghezza */
+            /* Calcola la larghezza per estendersi oltre il padding del genitore */
+            width: calc(100% + 4rem); /* 4rem = 2rem (left padding) + 2rem (right padding) of #splash-screen */
+            margin-left: -2rem; /* Sposta a sinistra per allinearsi al bordo di #splash-screen */
+            padding-left: 2rem; /* Aggiunge padding a sinistra per allineare il testo */
+            box-sizing: border-box; /* Include padding nel calcolo della larghezza */
+            cursor: pointer; /* Indica che è cliccabile */
         }
 
-        /* Custom styles for squared look and grayscale */
+        /* Stili personalizzati per l'aspetto squadrato e in scala di grigi */
         .section-card {
             background-color: #1a1a1a; /* Dark grey for cards/sections */
             border: 1px solid #333333; /* Medium grey border */
@@ -132,11 +143,12 @@
 <body class="antialiased">
     <!-- Splash screen -->
     <div id="splash-screen">
-        <pre id="boot-text"></pre>
-        <div id="click-to-start">Clicca per avviare</div>
+        <div id="grub-menu"></div>
+        <pre id="boot-sequence-display"></pre> <!-- Removed 'hidden' class from here -->
+        <!-- Removed click-to-start element -->
     </div>
 
-    <!-- Main site content (initially hidden) -->
+    <!-- Main site content (inizialmente nascosto) -->
     <div id="main-content" class="hidden min-h-screen flex flex-col items-center w-full relative z-0 px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <header class="text-center mt-10 mb-16 w-full max-w-6xl">
@@ -179,7 +191,7 @@
                 <!-- Video Card 1 -->
                 <div class="section-card overflow-hidden rounded-none">
                     <a href="https://youtu.be/Hkoi9kCf0jw?si=jA7T9e61Lx6YqUZs" target="_blank" rel="noopener noreferrer">
-                        <img src="./Fooocus AI.webp">
+                        <img src="./Fooocus AI.webp" alt="Miniatura Video 1" class="w-full h-48 object-cover">
                     </a>
                     <div class="p-6 text-left">
                         <h3 class="text-base sm:text-lg md:text-xl font-semibold text-white mb-2">
@@ -290,14 +302,20 @@
 
     <!-- Script for the bootloader animation -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const splashScreen = document.getElementById('splash-screen');
-            const bootTextElement = document.getElementById('boot-text');
-            const mainContent = document.getElementById('main-content');
-            const clickToStartElement = document.getElementById('click-to-start');
+        // Declare variables in a higher scope to ensure accessibility
+        let splashScreen;
+        let grubMenuElement;
+        let bootSequenceDisplay;
+        let mainContent;
 
-            let synth; // Tone.js synthesizer declaration
-            let gainNode; // Gain node for volume control
+        let synth; // Tone.js synthesizer declaration
+        let gainNode; // Gain node for volume control
+
+        document.addEventListener('DOMContentLoaded', () => {
+            splashScreen = document.getElementById('splash-screen');
+            grubMenuElement = document.getElementById('grub-menu');
+            bootSequenceDisplay = document.getElementById('boot-sequence-display');
+            mainContent = document.getElementById('main-content');
 
             // Function to start the audio context and animation
             const startBootAnimation = () => {
@@ -315,10 +333,12 @@
                             gainNode = new Tone.Gain(0.05).toDestination(); // Lower volume (0.05 = 5% of max)
                             synth.connect(gainNode);
                         }
-                        // Hide the "Click to start" message
-                        clickToStartElement.style.display = 'none';
-                        // Start typing
-                        typeLine();
+                        // Hide the GRUB menu
+                        grubMenuElement.style.display = 'none';
+                        // Show boot sequence display and start typing
+                        bootSequenceDisplay.style.display = 'block'; // Explicitly set to block
+                        bootSequenceDisplay.textContent = ''; // Clear content
+                        typeFullBootSequence();
                     }).catch(e => {
                         console.error("Failed to start audio context on user interaction:", e);
                         // If it fails even on click, show an error or fallback
@@ -334,19 +354,32 @@
                         gainNode = new Tone.Gain(0.05).toDestination();
                         synth.connect(gainNode);
                     }
-                    clickToStartElement.style.display = 'none';
-                    typeLine();
+                    grubMenuElement.style.display = 'none';
+                    bootSequenceDisplay.style.display = 'block'; // Explicitly set to block
+                    bootSequenceDisplay.textContent = ''; // Clear content
+                    typeFullBootSequence();
                 }
             };
 
-            // Add event listener to start animation on click
-            splashScreen.addEventListener('click', startBootAnimation, { once: true });
+            // Content for the static GRUB menu
+            const GRUB_MENU_CONTENT = `
+GNU GRUB version 2.06
 
+<span class="highlighted-grub-line" id="boot-option-bytedos">*Avvia ByteDOS</span>
+ Opzioni avanzate per ByteDOS
+ Test memoria
+ Riavvia
+ Spegni
 
-            // Simulated boot sequence with more technical messages
-            const bootSequence = [
+Usa i tasti ^ e v per evidenziare una voce.
+Premi Invio per avviare il sistema operativo selezionato, 'e' per modificare i comandi,
+o 'c' per la riga di comando.
+            `.trim(); // Trim to remove leading/trailing newlines from template literal
+
+            // Content for the full boot sequence (typed out)
+            const ACTUAL_BOOT_SEQUENCE = [
                 "BIOS: Initializing...",
-                "Memory Test: 65536KB OK",
+                "Memory Test: 655536KB OK",
                 "Disk Drive 0: ST31000528AS, S/N: 9SL00000, FW: CC49",
                 "Disk Drive 1: WDC WD10000L, S/N: WMA00000, FW: 01.01A01",
                 "Checking NVRAM...",
@@ -356,8 +389,6 @@
                 "  [00:02:00.0] Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 03)",
                 "  [00:03:00.0] Audio device: Intel Corporation 82801I (ICH9 Family) HD Audio Controller (rev 02)",
                 "Booting from Hard Disk...",
-                "GRUB loading...",
-                "Welcome to GRUB!",
                 "Loading Linux kernel...",
                 "Kernel version: 5.15.0-76-generic (x86_64)",
                 "Initializing initramfs...",
@@ -369,61 +400,69 @@
                 "Starting MySQL database service...",
                 "System startup complete.",
                 "",
-                "  ____        _           _", // ASCII start: lineIndex 24
-                " | __ ) _   _| |_ ___  __| | ___  ___", // lineIndex 25
-                " |  _ \\| | | | __/ _ \\/ _` |/ _ \\/ __|", // lineIndex 26
-                " | |_) | |_| | ||  __/ (_| | (_) \\__ \\", // lineIndex 27
-                " |____/ \\__, |\\__\\___|\\__,_|\\___/|___/", // lineIndex 28
-                "        |___/", // ASCII end: lineIndex 29
+                "  ____        _           _",
+                " | __ ) _   _| |_ ___  __| | ___  ___",
+                " |  _ \\| | | | __/ _ \\/ _` |/ _ \\/ __|",
+                " | |_) | |_| | ||  __/ (_| | (_) \\__ \\",
+                " |____/ \\__, |\\__\\___|\\__,_|\\___/|___/",
+                "        |___/",
                 "",
                 "Benvenuto nel Sito di ByteMinds."
             ];
 
-            let lineIndex = 0;
-            let charIndex = 0;
+            let bootLineIndex = 0;
+            let bootCharIndex = 0;
             const typingSpeed = 1; // Typing speed in ms per character (very fast)
             const lineDelay = 10; // Delay between lines in ms (very fast, further reduced)
             const fadeOutDelay = 150; // Delay before fade out in ms (very fast, further reduced)
 
-            function typeLine() {
-                if (lineIndex < bootSequence.length) {
+            // Function to type out the full boot sequence
+            function typeFullBootSequence() {
+                if (bootLineIndex < ACTUAL_BOOT_SEQUENCE.length) {
                     // Play beep only if synth is initialized AND current line is NOT part of ASCII art
-                    // ASCII art lines are from index 24 to 29 (inclusive)
-                    const isAsciiArtLine = lineIndex >= 24 && lineIndex <= 29;
-                    if (charIndex === 0 && synth) {
-                        // Play beep only if it's not an ASCII art line
-                        if (!isAsciiArtLine) {
-                            synth.triggerAttackRelease("G4", "64n"); // G4 note, very short duration
-                        }
+                    // ASCII art lines are from index (ACTUAL_BOOT_SEQUENCE.length - 8) to (ACTUAL_BOOT_SEQUENCE.length - 3)
+                    const isAsciiArtLine = bootLineIndex >= (ACTUAL_BOOT_SEQUENCE.length - 8) && bootLineIndex <= (ACTUAL_BOOT_SEQUENCE.length - 3);
+
+                    if (bootCharIndex === 0 && synth && !isAsciiArtLine) {
+                        synth.triggerAttackRelease("G4", "64n"); // G4 note, very short duration
                     }
 
-                    if (charIndex < bootSequence[lineIndex].length) {
-                        bootTextElement.textContent += bootSequence[lineIndex].charAt(charIndex);
-                        charIndex++;
-                        setTimeout(typeLine, typingSpeed);
+                    if (bootCharIndex < ACTUAL_BOOT_SEQUENCE[bootLineIndex].length) {
+                        bootSequenceDisplay.textContent += ACTUAL_BOOT_SEQUENCE[bootLineIndex].charAt(bootCharIndex);
+                        bootCharIndex++;
+                        setTimeout(typeFullBootSequence, typingSpeed);
                     } else {
-                        bootTextElement.textContent += '\n'; // Add new line after typing the line
-                        bootTextElement.scrollTop = bootTextElement.scrollHeight; // Scroll down
-                        lineIndex++;
-                        charIndex = 0;
+                        bootSequenceDisplay.textContent += '\n';
+                        bootSequenceDisplay.scrollTop = bootSequenceDisplay.scrollHeight;
+                        bootLineIndex++;
+                        bootCharIndex = 0;
                         setTimeout(() => {
-                            if (lineIndex < bootSequence.length) {
-                                typeLine(); // Start typing the next line
+                            if (bootLineIndex < ACTUAL_BOOT_SEQUENCE.length) {
+                                typeFullBootSequence();
                             } else {
-                                // All lines typed, remove cursor and start fade out
-                                bootTextElement.classList.add('typed');
+                                bootSequenceDisplay.classList.add('typed'); // Remove cursor
                                 setTimeout(() => {
                                     splashScreen.style.opacity = '0';
                                     setTimeout(() => {
-                                        splashScreen.remove(); // Remove splash screen
-                                        mainContent.classList.remove('hidden'); // Show main content
-                                        document.body.style.overflow = 'auto'; // Re-enable body scroll
-                                    }, 1000); // Wait for fade out transition to complete
-                                }, fadeOutDelay); // Delay before fade out
+                                        splashScreen.remove();
+                                        mainContent.classList.remove('hidden');
+                                        document.body.style.overflow = 'auto';
+                                    }, 1000);
+                                }, fadeOutDelay);
                             }
-                        }, lineDelay); // Short delay between lines
+                        }, lineDelay);
                     }
                 }
+            }
+
+            // Initial setup: display GRUB menu
+            grubMenuElement.innerHTML = GRUB_MENU_CONTENT;
+            bootSequenceDisplay.style.display = 'none'; // Hide boot sequence display initially
+
+            // Add event listener to the specific "Avvia ByteDOS" option
+            const bootOptionByteDOS = document.getElementById('boot-option-bytedos');
+            if (bootOptionByteDOS) {
+                bootOptionByteDOS.addEventListener('click', startBootAnimation, { once: true });
             }
         });
     </script>
